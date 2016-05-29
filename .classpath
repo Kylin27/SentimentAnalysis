@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/usr/local/hadoop-0.23.6/share/hadoop/common/hadoop-common-0.23.6.jar"/>
+	<classpathentry kind="lib" path="/usr/local/hadoop-0.23.6/share/hadoop/hdfs/hadoop-hdfs-0.23.6.jar"/>
+	<classpathentry kind="lib" path="/usr/local/hadoop-0.23.6/share/hadoop/mapreduce/hadoop-mapreduce-client-core-0.23.6.jar"/>
+	<classpathentry kind="lib" path="/usr/local/hadoop-0.23.6/share/hadoop/yarn/hadoop-yarn-server-common-0.23.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
