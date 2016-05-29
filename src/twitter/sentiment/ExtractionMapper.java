@@ -14,21 +14,21 @@ import cmu.arktweetnlp.io.JsonTweetReader;
 
 public class ExtractionMapper extends Mapper<Object, Text, Text, IntWritable>  {
 	private IntWritable sentiment = new IntWritable();
-    private Text word = new Text();
-
+	private Text word = new Text();
+	
 	private Tagger tagger = new Tagger();
-    
-    // Dictionaries
-    private ArrayList<String> negative = new ArrayList<String>();
-    private ArrayList<String> positive = new ArrayList<String>();
-    private ArrayList<String> neutral = new ArrayList<String>();
-   
-    private JsonTweetReader jsonTweetReader = new JsonTweetReader();
-    
-    public void map(Object key, Text value, Context context) throws IOException, InterruptedException  {
+	
+	// Dictionaries
+	private ArrayList<String> negative = new ArrayList<String>();
+	private ArrayList<String> positive = new ArrayList<String>();
+	private ArrayList<String> neutral = new ArrayList<String>();
+	  
+	private JsonTweetReader jsonTweetReader = new JsonTweetReader();
+	    
+	public void map(Object key, Text value, Context context) throws IOException, InterruptedException  {
 		
-    	List<TaggedToken> taggedTokens = null;
-    	ArrayList<TaggedToken> subjects = new ArrayList<TaggedToken>();
+		List<TaggedToken> taggedTokens = null;
+		ArrayList<TaggedToken> subjects = new ArrayList<TaggedToken>();
 		String line = value.toString();
 		if(!line.isEmpty())  {
 			// Filter out tweet text
@@ -38,26 +38,25 @@ public class ExtractionMapper extends Mapper<Object, Text, Text, IntWritable>  {
 							    
 				// Extract the subjects
 				for(TaggedToken token : taggedTokens)  {
-			    	if((token.tag.equals("N")|| token.tag.equals("^")))  {
-			             token.token = token.token.replaceAll("[-@#$']","");
-			    		 boolean check = false;
-			    		 
-			    		 // Check if subject already in list
-			    		 for(TaggedToken sub : subjects)  {
-			    			 if(sub.token.equalsIgnoreCase(token.token))
-			    				 check = true;
-			    		 }
-			    		 
-			    		 if(!check)  {
-			    			 subjects.add(token);
-			    		 }
-			    		 
-			    	}
-			    }
+					if((token.tag.equals("N")|| token.tag.equals("^")))  {
+						token.token = token.token.replaceAll("[-@#$']","");
+						boolean check = false;
+						 
+						// Check if subject already in list
+						for(TaggedToken sub : subjects)  {
+							if(sub.token.equalsIgnoreCase(token.token))
+								check = true;
+						}
+						 
+						if(!check)  {
+							subjects.add(token);
+						} 
+					}
+				}
 			
 		    
 				// Calculate Sentiment
-			    int tweetSentiment = 0;
+				int tweetSentiment = 0;
 				for (TaggedToken token : taggedTokens) {
 					token.token = token.token.replaceAll("[-@#$]","");
 					System.err.println(token.token + "\t" + token.tag);
@@ -84,11 +83,11 @@ public class ExtractionMapper extends Mapper<Object, Text, Text, IntWritable>  {
 			}
 			//System.out.println("Dictionary Sanity Check:" + negativeEmotes.get(0));
 		}
-    }
+	}
     
-    @Override
-    // Runs once when the job starts
-    // Loads tagger model and sentiment dictionaries
+	@Override
+	// Runs once when the job starts
+	// Loads tagger model and sentiment dictionaries
 	protected void setup(Context context) throws IOException, InterruptedException {
 		super.setup(context);
 		// Load tagger model
@@ -102,23 +101,23 @@ public class ExtractionMapper extends Mapper<Object, Text, Text, IntWritable>  {
 		
 		// TODO: Load sentiment Dictionaries, modify paths as necessary
 		fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeEmotes");
-        fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveEmotes");
-        fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeVerbs");
-        fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveVerbs");
-        fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeExclaim");
-        fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveExclaim");
-        fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeStopwords");
-        fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveStopwords");
-        fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralEmotes");
-        fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralVerbs");
-        fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralExclaim");
-        fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralStopWords");
+		fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveEmotes");
+		fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeVerbs");
+		fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveVerbs");
+		fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeExclaim");
+		fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveExclaim");
+		fillDictionary(negative, "/s/bach/a/class/cs455/asg3/dictionary/negativeStopwords");
+		fillDictionary(positive, "/s/bach/a/class/cs455/asg3/dictionary/positiveStopwords");
+		fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralEmotes");
+		fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralVerbs");
+		fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralExclaim");
+		fillDictionary(neutral, "/s/bach/a/class/cs455/asg3/dictionary/neutralStopWords");
         
 	}
     
-    // Helper method to load dictionary items into ArrayLists
-    public void fillDictionary(ArrayList<String> list, String filename)  {
-    	try  {
+	// Helper method to load dictionary items into ArrayLists
+	public void fillDictionary(ArrayList<String> list, String filename)  {
+		try  {
 			BufferedReader br = new BufferedReader(new FileReader(filename));
 			String line;
 			while((line = br.readLine()) != null) {
